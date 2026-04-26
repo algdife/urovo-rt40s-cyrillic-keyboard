@@ -82,6 +82,9 @@ class KeyMapTest {
         assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_B))
         assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_D))
         assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_F))
+        assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_Q))
+        assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_W))
+        assertEquals(passThrough, ctrl(KeyEvent.KEYCODE_X))
     }
 
     @Test fun ctrl_shift_capital_extras() {
@@ -93,6 +96,14 @@ class KeyMapTest {
         assertEquals(ch('Ы'), ctrlShift(KeyEvent.KEYCODE_U))
         assertEquals(ch('Я'), ctrlShift(KeyEvent.KEYCODE_Y))
         assertEquals(ch('Ж'), ctrlShift(KeyEvent.KEYCODE_Z))
+        assertEquals(ch(','), ctrlShift(KeyEvent.KEYCODE_COMMA))
+        assertEquals(ch('.'), ctrlShift(KeyEvent.KEYCODE_PERIOD))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_B))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_D))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_F))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_Q))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_W))
+        assertEquals(passThrough, ctrlShift(KeyEvent.KEYCODE_X))
     }
 
     @Test fun unmappable_keys_pass_through() {

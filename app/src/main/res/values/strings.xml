@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Cyrillic Toggle</string>
-    <string name="accessibility_service_label">Cyrillic Toggle</string>
+
+    <!-- IME (v3 transparent IME) -->
+    <string name="ime_label">Cyrillic Toggle (Hardware Keypad)</string>
+    <string name="ime_subtype_label">Russian Phonetic (Urovo)</string>
+
+    <!-- Accessibility service (v1, kept for reference) -->
+    <string name="accessibility_service_label">Cyrillic Toggle (a11y)</string>
     <string name="accessibility_service_description">
         Adds Russian phonetic Cyrillic input to the hardware keypad.
         Press Shift + Space to switch between EN and RU.
     </string>
+
+    <!-- Mode toast -->
     <string name="toast_mode_en">EN</string>
     <string name="toast_mode_ru">RU</string>
-    <string name="status_enabled">Cyrillic Toggle is enabled.</string>
-    <string name="status_disabled">Cyrillic Toggle is NOT enabled. Tap below to grant accessibility permission.</string>
-    <string name="open_settings">Open Accessibility Settings</string>
+
+    <!-- SettingsActivity -->
+    <string name="status_ime_active">Cyrillic Toggle is the active IME ✓</string>
+    <string name="status_ime_enabled_inactive">Cyrillic Toggle is enabled but not the active IME — tap "Switch IME" and pick it.</string>
+    <string name="status_ime_disabled">Cyrillic Toggle IME is NOT enabled. Tap "Enable IME" first.</string>
+    <string name="enable_ime">Enable IME (system settings)</string>
+    <string name="switch_ime">Switch active IME (picker)</string>
+    <string name="open_settings">Open Accessibility Settings (legacy v1)</string>
 </resources>

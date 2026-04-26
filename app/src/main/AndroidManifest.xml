@@ -18,6 +18,21 @@
             </intent-filter>
         </activity>
 
+        <!-- v3 transparent IME (the working path on Urovo) -->
+        <service
+            android:name=".CyrToggleInputMethodService"
+            android:exported="true"
+            android:label="@string/ime_label"
+            android:permission="android.permission.BIND_INPUT_METHOD">
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
+        </service>
+
+        <!-- v1 accessibility service (kept as reference; does not work on Urovo RT40S due to UBX intercept) -->
         <service
             android:name=".CyrToggleAccessibilityService"
             android:exported="true"
@@ -30,6 +45,16 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
+
+        <!-- Test receiver for adb-driven mode toggle. Used to verify v3 IME without hardware. -->
+        <receiver
+            android:name=".ToggleReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ru.urovo.cyrtoggle.TOGGLE" />
+                <action android:name="ru.urovo.cyrtoggle.SET" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".BootReceiver"

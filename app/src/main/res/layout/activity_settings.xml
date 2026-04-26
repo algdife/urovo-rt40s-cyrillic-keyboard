@@ -3,28 +3,43 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:gravity="center">
+    android:padding="20dp"
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/statusText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:gravity="center"
-        android:paddingBottom="32dp" />
+        android:paddingBottom="20dp" />
+
+    <Button
+        android:id="@+id/enableImeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/enable_ime" />
+
+    <Button
+        android:id="@+id/switchImeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/switch_ime" />
 
     <Button
         android:id="@+id/openSettingsButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="@string/open_settings" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="32dp"
-        android:textSize="12sp"
-        android:text="v1.0.0" />
+        android:paddingTop="20dp"
+        android:textSize="11sp"
+        android:text="v1.0.0 (v3 IME)" />
 </LinearLayout>

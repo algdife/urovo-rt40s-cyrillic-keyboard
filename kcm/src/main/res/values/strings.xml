@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cyrillic Layout (Urovo)</string>
+    <string name="keyboard_layout_russian_phonetic_urovo_label">Russian Phonetic (Urovo)</string>
+    <string name="grant_overlay">Grant overlay permission</string>
+    <string name="start_toggle">Show floating toggle</string>
+    <string name="stop_toggle">Hide floating toggle</string>
+    <string name="open_kbd_settings">Open keyboard layout picker</string>
+    <string name="status_overlay_granted">Overlay permission: granted</string>
+    <string name="status_overlay_missing">Overlay permission: NOT granted (required)</string>
+    <string name="notif_channel_name">Cyrillic toggle</string>
+    <string name="notif_text">Floating toggle is active</string>
+    <string name="floating_label">⌨</string>
+</resources>

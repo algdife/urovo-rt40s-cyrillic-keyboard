@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "cyr-toggle"
 include(":app")
+include(":kcm")

@@ -8,3 +8,6 @@ build/
 captures/
 keystore/*.keystore
 keystore/keystore.properties
+
+# Developer-machine env helper
+env.sh

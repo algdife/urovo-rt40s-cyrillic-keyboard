@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cyrillic Toggle</string>
+    <string name="accessibility_service_label">Cyrillic Toggle</string>
+    <string name="accessibility_service_description">
+        Adds Russian phonetic Cyrillic input to the hardware keypad.
+        Press Shift + Space to switch between EN and RU.
+    </string>
+    <string name="toast_mode_en">EN</string>
+    <string name="toast_mode_ru">RU</string>
+    <string name="status_enabled">Cyrillic Toggle is enabled.</string>
+    <string name="status_disabled">Cyrillic Toggle is NOT enabled. Tap below to grant accessibility permission.</string>
+    <string name="open_settings">Open Accessibility Settings</string>
+</resources>

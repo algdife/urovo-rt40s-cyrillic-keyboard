@@ -4,6 +4,7 @@ local.properties
 build/
 .idea/
 *.apk
+!dist/*.apk
 *.aab
 captures/
 keystore/*.keystore
@@ -11,3 +12,17 @@ keystore/keystore.properties
 
 # Developer-machine env helper
 env.sh
+
+# Vendor framework jars pulled directly from device — Urovo IP, do not redistribute.
+# (Urovo's own public SDK platform_sdk_v4.1.0326.jar from urovosamples/SDK_ReleaseforAndroid is OK.)
+vendor/com.ubx.platform.jar
+vendor/com.ubx.usdk.jar
+vendor/com.ubx.saminterfaces.jar
+vendor/com.ubx.services.jar
+vendor/META-INF/
+vendor/classes.dex
+
+# Diagnostic captures
+ui.xml
+screen.png
+generic.kcm

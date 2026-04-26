@@ -15,7 +15,11 @@ object KeyMap {
     }
 
     fun lookup(keyCode: Int, metaState: Int): Lookup {
-        val shift = (metaState and KeyEvent.META_SHIFT_ON) != 0
+        // Shift OR Caps Lock (XOR — they cancel when both held), so users
+        // can either hold Shift or toggle Caps Lock for capitals.
+        val shiftBit = (metaState and KeyEvent.META_SHIFT_ON) != 0
+        val capsBit = (metaState and KeyEvent.META_CAPS_LOCK_ON) != 0
+        val shift = shiftBit xor capsBit
         val ctrl = (metaState and KeyEvent.META_CTRL_ON) != 0
         return when (keyCode) {
             KeyEvent.KEYCODE_A -> letter('а', 'А', extra = 'э', extraCap = 'Э', ctrl, shift)

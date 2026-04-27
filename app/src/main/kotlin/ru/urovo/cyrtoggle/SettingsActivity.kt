@@ -24,6 +24,13 @@ class SettingsActivity : AppCompatActivity() {
             imm.showInputMethodPicker()
         }
 
+        findViewById<Button>(R.id.softKbdToggleButton).setOnClickListener {
+            val store = ModeStore(this)
+            val newVal = !store.isSoftKbdEnabled()
+            store.setSoftKbdEnabled(newVal)
+            refreshSoftKbdButton()
+        }
+
         findViewById<Button>(R.id.openSettingsButton).setOnClickListener {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
@@ -37,6 +44,13 @@ class SettingsActivity : AppCompatActivity() {
             isImeEnabled() -> getString(R.string.status_ime_enabled_inactive)
             else -> getString(R.string.status_ime_disabled)
         }
+        refreshSoftKbdButton()
+    }
+
+    private fun refreshSoftKbdButton() {
+        val btn = findViewById<Button>(R.id.softKbdToggleButton)
+        val on = ModeStore(this).isSoftKbdEnabled()
+        btn.text = getString(if (on) R.string.soft_kbd_on else R.string.soft_kbd_off)
     }
 
     private fun isImeEnabled(): Boolean {

@@ -54,6 +54,7 @@
             <intent-filter>
                 <action android:name="ru.urovo.cyrtoggle.TOGGLE" />
                 <action android:name="ru.urovo.cyrtoggle.SET" />
+                <action android:name="ru.urovo.cyrtoggle.SOFT_KBD" />
             </intent-filter>
         </receiver>
 

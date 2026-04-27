@@ -21,8 +21,16 @@ class ModeStore(context: Context) {
         return newMode
     }
 
+    /** Whether the on-screen soft keyboard should be shown. Default true. */
+    fun isSoftKbdEnabled(): Boolean = prefs.getBoolean(KEY_SOFT_KBD, true)
+
+    fun setSoftKbdEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_SOFT_KBD, enabled).apply()
+    }
+
     companion object {
         private const val PREFS = "cyr_toggle_prefs"
         private const val KEY_MODE = "mode"
+        private const val KEY_SOFT_KBD = "soft_kbd_enabled"
     }
 }

@@ -1,6 +1,8 @@
 package ru.urovo.cyrtoggle
 
 import android.inputmethodservice.InputMethodService
+import android.inputmethodservice.Keyboard
+import android.inputmethodservice.KeyboardView
 import android.os.SystemClock
 import android.util.Log
 import android.view.KeyEvent
@@ -28,14 +30,25 @@ import android.view.View
  * press, toggle mode and consume). This adds about one keystroke worth of
  * latency to typing a space, which is acceptable for warehouse data entry.
  */
-class CyrToggleInputMethodService : InputMethodService() {
+class CyrToggleInputMethodService : InputMethodService(),
+    KeyboardView.OnKeyboardActionListener {
 
     private lateinit var modeStore: ModeStore
     private lateinit var toaster: Toaster
 
+    // Soft-keyboard state (only used when modeStore.isSoftKbdEnabled()).
+    private var softKbdView: KeyboardView? = null
+    private var ruKeyboard: Keyboard? = null
+    private var enKeyboard: Keyboard? = null
+    private var softShifted: Boolean = false
+    /** true = show Russian layout; false = show English layout. */
+    private var softShowingRu: Boolean = true
+
     // Long-press Space state.
     private var spaceDownAtMs: Long = 0L
     private var spaceLongPressFired: Boolean = false
+    /** Time of the last short-tap Space release — for double-tap detection. */
+    private var lastSpaceUpAtMs: Long = 0L
 
     // Ctrl tracking. There's no Caps Lock on this keypad, so for capital
     // Cyrillic extras (Ё, Ж, Ч, Щ, Ш, Ы, Я, Э) we use a double-tap-Ctrl
@@ -51,10 +64,22 @@ class CyrToggleInputMethodService : InputMethodService() {
         Log.i(TAG, "IME created, mode=${modeStore.get()}")
     }
 
-    /** No on-screen keyboard. */
-    override fun onCreateInputView(): View? = null
+    /** Soft keyboard view — only created/shown when user enables it in settings. */
+    override fun onCreateInputView(): View? {
+        if (!modeStore.isSoftKbdEnabled()) return null
+        val view = layoutInflater.inflate(R.layout.softkbd_view, null) as KeyboardView
+        ruKeyboard = Keyboard(this, R.xml.softkbd_ru)
+        enKeyboard = Keyboard(this, R.xml.softkbd_en)
+        // Default the soft layout to match the current hardware mode.
+        softShowingRu = modeStore.get() == Mode.RU
+        view.keyboard = if (softShowingRu) ruKeyboard else enKeyboard
+        view.setOnKeyboardActionListener(this)
+        view.isPreviewEnabled = true
+        softKbdView = view
+        return view
+    }
 
-    override fun onEvaluateInputViewShown(): Boolean = false
+    override fun onEvaluateInputViewShown(): Boolean = modeStore.isSoftKbdEnabled()
 
     override fun onEvaluateFullscreenMode(): Boolean = false
 
@@ -177,22 +202,41 @@ class CyrToggleInputMethodService : InputMethodService() {
         spaceLongPressFired = false
 
         if (wasLong) {
-            // Toggle already fired on DOWN — consume the UP, no space typed.
+            // Long-press toggle already fired on DOWN — consume the UP.
+            lastSpaceUpAtMs = 0L
             return true
         }
 
-        // Short tap — type one space.
         val now = SystemClock.uptimeMillis()
         if (downAt > 0 && (now - downAt) >= TOGGLE_HOLD_MS) {
-            // Held long enough but the repeat events didn't fire (some
-            // firmwares don't send key-repeat). Treat as long-press anyway.
+            // Long press detected via UP-time fallback (no-repeat firmware).
             val newMode = modeStore.toggle()
             toaster.show(newMode)
-            Log.i(TAG, "long-press SPACE (no-repeat fallback) -> toggle -> $newMode")
+            Log.i(TAG, "long-press SPACE (no-repeat fallback) -> $newMode")
+            lastSpaceUpAtMs = 0L
             return true
         }
 
+        // Double-tap detection — two short Space taps within DOUBLE_SPACE_MS
+        // toggles the soft keyboard on/off (and erases the first space we
+        // already committed).
+        if ((now - lastSpaceUpAtMs) in 1..DOUBLE_SPACE_MS) {
+            currentInputConnection?.deleteSurroundingText(1, 0)   // undo first space
+            val newVal = !modeStore.isSoftKbdEnabled()
+            modeStore.setSoftKbdEnabled(newVal)
+            toaster.show(modeStore.get())
+            Log.i(TAG, "double-tap SPACE -> soft kbd ${if (newVal) "ON" else "OFF"}")
+            // Force IME to re-evaluate input view on next focus.
+            // Hide the current window so the next text-field focus triggers
+            // onCreateInputView() / onEvaluateInputViewShown() afresh.
+            try { requestHideSelf(0) } catch (_: Exception) {}
+            lastSpaceUpAtMs = 0L
+            return true
+        }
+
+        // Single short tap → commit one space + record time for next double-tap window.
         currentInputConnection?.commitText(" ", 1)
+        lastSpaceUpAtMs = now
         return true
     }
 
@@ -202,6 +246,50 @@ class CyrToggleInputMethodService : InputMethodService() {
         KeyEvent.KEYCODE_PERIOD -> true
         else -> false
     }
+
+    // ---------- Soft keyboard (KeyboardView.OnKeyboardActionListener) ----------
+
+    override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        val ic = currentInputConnection ?: return
+        when (primaryCode) {
+            SOFT_SHIFT -> {
+                softShifted = !softShifted
+                softKbdView?.invalidateAllKeys()
+            }
+            SOFT_BACKSPACE -> {
+                ic.deleteSurroundingText(1, 0)
+            }
+            SOFT_ENTER -> {
+                ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+                ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER))
+            }
+            SOFT_LANG_SWITCH -> {
+                softShowingRu = !softShowingRu
+                softShifted = false
+                softKbdView?.keyboard = if (softShowingRu) ruKeyboard else enKeyboard
+                softKbdView?.invalidateAllKeys()
+            }
+            else -> {
+                if (primaryCode <= 0) return
+                val ch = primaryCode.toChar()
+                val finalCh = if (softShifted) ch.uppercaseChar() else ch
+                ic.commitText(finalCh.toString(), 1)
+                if (softShifted) {
+                    // Shift is one-shot — clear after a single char (closer to Gboard UX).
+                    softShifted = false
+                    softKbdView?.invalidateAllKeys()
+                }
+            }
+        }
+    }
+
+    override fun onPress(primaryCode: Int) {}
+    override fun onRelease(primaryCode: Int) {}
+    override fun onText(text: CharSequence?) {}
+    override fun swipeLeft() {}
+    override fun swipeRight() {}
+    override fun swipeDown() {}
+    override fun swipeUp() {}
 
     /**
      * Hardcoded English mapping for EN mode. Independent of the device's
@@ -248,5 +336,13 @@ class CyrToggleInputMethodService : InputMethodService() {
         private const val CTRL_STICKY_MS = 400L
         /** Maximum gap between two Ctrl presses to count as a double-tap. */
         private const val DOUBLE_CTRL_MS = 400L
+        /** Maximum gap between two Space taps to count as a double-tap (toggles soft kbd). */
+        private const val DOUBLE_SPACE_MS = 280L
+
+        // Soft-keyboard special keycodes (values in our XML keyboard files).
+        private const val SOFT_SHIFT = -1
+        private const val SOFT_BACKSPACE = -5
+        private const val SOFT_ENTER = -4
+        private const val SOFT_LANG_SWITCH = -101
     }
 }

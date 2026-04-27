@@ -13,7 +13,20 @@ R → р   S → с   T → т   U → ю   V → в   Y → у   Z → з
 , → ъ   . → ь
 Shift+letter → capital   Ctrl+letter → ё ж ч щ ш ы я э   Ctrl Ctrl + letter → Ё Ж Ч Щ Ш Ы Я Э
 Hold Space ½ sec → toggle EN ⇄ RU
+Double-tap Space (fast) → show/hide on-screen keyboard (v2)
 ```
+
+## v2 (2026-04-27)
+
+- Added a built-in on-screen soft keyboard (Russian ЙЦУКЕН + English QWERTY,
+  layout-switch button, Shift, Backspace, Enter, Space).
+- Soft keyboard show/hide can be toggled by **double-tapping Space** (fast),
+  or via the launcher icon's "On-screen keyboard" button. Default: shown.
+- Fixes: shift one-shot no longer leaves a sticky visual indicator;
+  short-tap of Space still types a literal space; long-press still toggles
+  EN/RU mode.
+- Versions: APK `versionCode=2`, `versionName="2.0.0"`. v1 stays available
+  in git history under tag `v1.0.0` (if tagged).
 
 ## Краткое описание (русский)
 
@@ -21,7 +34,7 @@ Hold Space ½ sec → toggle EN ⇄ RU
 печатать русский текст с физической клавиатуры. Раскладка фонетическая
 (A → а, B → б, …). Переключение между EN и РУ — удерживайте пробел ½ секунды.
 
-Готовый APK для warehouse-сотрудников: [`dist/cyr-toggle-1.0.0-release.apk`](dist/).
+Готовый APK для warehouse-сотрудников: [`dist/cyr-toggle-2.0.0-release.apk`](dist/).
 Полная инструкция на русском: [`dist/INSTALL_RU.md`](dist/INSTALL_RU.md).
 Печатная памятка для рабочих: [`dist/WAREHOUSE_LABEL_RU.docx`](dist/WAREHOUSE_LABEL_RU.docx).
 
@@ -103,7 +116,7 @@ keytool -genkeypair -alias cyr-toggle -keyalg RSA -keysize 2048 -validity 10000 
 ## Deploy to a single device
 
 ```bash
-adb install -r dist/cyr-toggle-1.0.0-release.apk
+adb install -r dist/cyr-toggle-2.0.0-release.apk
 adb shell appops set ru.urovo.cyrtoggle ACCESS_RESTRICTED_SETTINGS allow
 adb shell ime enable ru.urovo.cyrtoggle/.CyrToggleInputMethodService
 adb shell ime set    ru.urovo.cyrtoggle/.CyrToggleInputMethodService

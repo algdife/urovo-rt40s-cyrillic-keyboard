@@ -132,7 +132,7 @@ Customers deploying RT40S to non-English warehouses (Russia, Ukraine,
 Belarus, Kazakhstan, Bulgaria, etc.) cannot use standard Android tooling to
 add Cyrillic input to the hardware keypad. They must either:
 1. Engineer a custom IME (non-trivial; we did this and now have a working
-   APK at https://github.com/agazarov-cyber/urovo-rt40s-cyrillic-keyboard),
+   APK at https://github.com/algdife/urovo-rt40s-cyrillic-keyboard),
 2. Use Urovo's `KeyMapManager` SDK directly (requires SDK familiarity and
    typically a per-key `KeyEntry` configuration with `Intent` actions), or
 3. Obtain device-owner MDM privileges to disable `com.ubx.keyremap`.
@@ -161,7 +161,7 @@ None of these are within reach for typical IT departments.
 ## Reference / further detail
 
 Full diagnostic + working solution code:
-**https://github.com/agazarov-cyber/urovo-rt40s-cyrillic-keyboard**
+**https://github.com/algdife/urovo-rt40s-cyrillic-keyboard**
 
 Specifically:
 - `FINAL_REPORT.md` — full reverse-engineering write-up

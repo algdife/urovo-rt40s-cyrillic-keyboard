@@ -24,4 +24,6 @@
     <string name="enable_ime">Enable IME (system settings)</string>
     <string name="switch_ime">Switch active IME (picker)</string>
     <string name="open_settings">Open Accessibility Settings (legacy v1)</string>
+    <string name="soft_kbd_on">On-screen keyboard: ON (tap to disable)</string>
+    <string name="soft_kbd_off">On-screen keyboard: OFF (tap to enable)</string>
 </resources>

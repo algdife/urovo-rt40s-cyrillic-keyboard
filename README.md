@@ -15,15 +15,13 @@ Shift+letter → capital   Ctrl+letter → ё ж ч щ ш ы я э   Ctrl Ctrl +
 Hold Space ½ sec → toggle EN ⇄ RU
 ```
 
-## Краткое описание (русский)
+## Краткое описание
 
-Маленькое Android-приложение для терминала **Urovo RT40S**, которое позволяет
-печатать русский текст с физической клавиатуры. Раскладка фонетическая
-(A → а, B → б, …). Переключение между EN и РУ — удерживайте пробел ½ секунды.
+Android-приложение для терминала Urovo RT40S, которое позволяет печатать русский текст с физической клавиатуры. Раскладка фонетическая (A → а, B → б, …). Переключение между EN и РУ — удерживайте пробел ½ секунды.
 
-Готовый APK для warehouse-сотрудников: [`dist/cyr-toggle-1.0.0-release.apk`](dist/).
+Готовый APK: [`dist/cyr-toggle-1.0.0-release.apk`](dist/).
 Полная инструкция на русском: [`dist/INSTALL_RU.md`](dist/INSTALL_RU.md).
-Печатная памятка для рабочих: [`dist/WAREHOUSE_LABEL_RU.docx`](dist/WAREHOUSE_LABEL_RU.docx).
+Памятка: [`dist/WAREHOUSE_LABEL_RU.docx`](dist/WAREHOUSE_LABEL_RU.docx).
 
 ## Why a custom IME (and not an accessibility service or KCM)
 

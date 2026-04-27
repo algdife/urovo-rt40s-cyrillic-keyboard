@@ -7,6 +7,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 
 /**
  * Transparent Input Method Service.
@@ -64,13 +65,30 @@ class CyrToggleInputMethodService : InputMethodService(),
         Log.i(TAG, "IME created, mode=${modeStore.get()}")
     }
 
-    /** Soft keyboard view — only created/shown when user enables it in settings. */
+    /** Soft keyboard view — pref-controlled. We ALWAYS return a non-null view
+     *  (either the real keyboard or a zero-height empty view), because Android's
+     *  IMS framework caches the view and `show_ime_with_hard_keyboard=1` makes
+     *  the system force-show the IME on this device regardless of our
+     *  onEvaluateInputViewShown answer. By returning an empty 0-dp view when
+     *  the pref is off, the soft keyboard is invisible even when the system
+     *  forces it to show. */
     override fun onCreateInputView(): View? {
-        if (!modeStore.isSoftKbdEnabled()) return null
+        Log.d(TAG, "onCreateInputView softKbd=${modeStore.isSoftKbdEnabled()}")
+        return if (modeStore.isSoftKbdEnabled()) buildSoftKbdView() else buildEmptyView()
+    }
+
+    override fun onEvaluateInputViewShown(): Boolean {
+        val v = modeStore.isSoftKbdEnabled()
+        Log.d(TAG, "onEvaluateInputViewShown -> $v")
+        // When pref is off, also return false to give the system the "hide it"
+        // signal in addition to handing it the empty view.
+        return v
+    }
+
+    private fun buildSoftKbdView(): View {
         val view = layoutInflater.inflate(R.layout.softkbd_view, null) as KeyboardView
         ruKeyboard = Keyboard(this, R.xml.softkbd_ru)
         enKeyboard = Keyboard(this, R.xml.softkbd_en)
-        // Default the soft layout to match the current hardware mode.
         softShowingRu = modeStore.get() == Mode.RU
         view.keyboard = if (softShowingRu) ruKeyboard else enKeyboard
         view.setOnKeyboardActionListener(this)
@@ -79,7 +97,22 @@ class CyrToggleInputMethodService : InputMethodService(),
         return view
     }
 
-    override fun onEvaluateInputViewShown(): Boolean = modeStore.isSoftKbdEnabled()
+    private fun buildEmptyView(): View {
+        softKbdView = null
+        return View(this).apply {
+            layoutParams = ViewGroup.LayoutParams(0, 0)
+            minimumHeight = 0
+        }
+    }
+
+    /** Force the IME to swap soft-kbd view immediately when the pref toggles. */
+    private fun applySoftKbdPref() {
+        try {
+            setInputView(if (modeStore.isSoftKbdEnabled()) buildSoftKbdView() else buildEmptyView())
+        } catch (e: Exception) {
+            Log.w(TAG, "applySoftKbdPref failed: ${e.message}")
+        }
+    }
 
     override fun onEvaluateFullscreenMode(): Boolean = false
 
@@ -226,10 +259,8 @@ class CyrToggleInputMethodService : InputMethodService(),
             modeStore.setSoftKbdEnabled(newVal)
             toaster.show(modeStore.get())
             Log.i(TAG, "double-tap SPACE -> soft kbd ${if (newVal) "ON" else "OFF"}")
-            // Force IME to re-evaluate input view on next focus.
-            // Hide the current window so the next text-field focus triggers
-            // onCreateInputView() / onEvaluateInputViewShown() afresh.
-            try { requestHideSelf(0) } catch (_: Exception) {}
+            // Apply the change immediately by swapping the input view.
+            applySoftKbdPref()
             lastSpaceUpAtMs = 0L
             return true
         }
